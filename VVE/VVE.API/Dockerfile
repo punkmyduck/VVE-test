@@ -13,6 +13,9 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["VVE.API/VVE.API.csproj","VVE.API/"]
+COPY ["VVE.Application/VVE.Application.csproj", "VVE.Application/"]
+COPY ["VVE.Infrastructure/VVE.Infrastructure.csproj", "VVE.Infrastructure/"]
+COPY ["VVE.domain/VVE.Domain.csproj", "VVE.domain/"]
 RUN dotnet restore "./VVE.API/VVE.API.csproj"
 COPY . .
 WORKDIR "/src/VVE.API"
