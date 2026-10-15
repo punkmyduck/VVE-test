@@ -1,5 +1,7 @@
 ﻿using VVE.Application.Abstractions;
 using VVE.Application.Abstractions.Persistence;
+using VVE.Application.Abstractions.Messaging;
+using VVE.Application.Events;
 using VVE.Application.Exceptions;
 
 namespace VVE.Application.Features;
@@ -8,13 +10,16 @@ public sealed class CompleteTaskCommandHandler : ICommandHandler<CompleteTaskCom
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITaskItemRepository _taskItemRepository;
+    private readonly ITaskEventPublisher _taskEventPublisher;
 
     public CompleteTaskCommandHandler(
         IUnitOfWork unitOfWork,
-        ITaskItemRepository taskItemRepository)
+        ITaskItemRepository taskItemRepository,
+        ITaskEventPublisher taskEventPublisher)
     {
         _unitOfWork = unitOfWork;
         _taskItemRepository = taskItemRepository;
+        _taskEventPublisher = taskEventPublisher;
     }
 
     public async Task HandleAsync(CompleteTaskCommand command, CancellationToken cancellationToken)
@@ -37,5 +42,11 @@ public sealed class CompleteTaskCommandHandler : ICommandHandler<CompleteTaskCom
         taskItem.Complete();
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _taskEventPublisher.PublishTaskCompleted(new TaskCompletedEvent(
+            taskItem.Id,
+            taskItem.Title,
+            taskItem.CompletedAt!.Value,
+            taskItem.Priority));
     }
 }
