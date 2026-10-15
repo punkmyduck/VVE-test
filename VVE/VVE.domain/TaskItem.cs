@@ -1,4 +1,4 @@
-﻿namespace VVE.domain;
+﻿namespace VVE.Domain;
 
 public class TaskItem
 {
@@ -35,7 +35,7 @@ public class TaskItem
 
         if (!Enum.IsDefined(priority))
         {
-            throw new ArgumentOutOfRangeException(nameof(priority), priority, $"Неизвестный тип перечисления {nameof(domain.Priority)}.");
+            throw new ArgumentOutOfRangeException(nameof(priority), priority, $"Неизвестный тип перечисления {nameof(Domain.Priority)}.");
         }
 
         Id = Guid.NewGuid();

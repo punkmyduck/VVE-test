@@ -1,4 +1,4 @@
-﻿namespace VVE.domain;
+﻿namespace VVE.Domain;
 
 public enum Priority
 {
