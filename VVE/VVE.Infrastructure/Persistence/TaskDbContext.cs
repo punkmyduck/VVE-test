@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using VVE.Application.Abstractions.Persistence;
 using VVE.Domain;
 
 namespace VVE.Infrastructure.Persistence;
 
-public class TaskDbContext(DbContextOptions<TaskDbContext> options) : DbContext(options)
+public class TaskDbContext(DbContextOptions<TaskDbContext> options) : DbContext(options), IUnitOfWork
 {
     public DbSet<TaskItem> Tasks => Set<TaskItem>();
 
