@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using VVE.Application.Abstractions.Persistence;
 using VVE.Infrastructure.Persistence;
+using VVE.Infrastructure.Persistence.Repositories;
 
 namespace VVE.API;
 
@@ -13,6 +15,9 @@ public class Program
             ?? throw new InvalidOperationException("Не задана строка подключения ConnectionStrings:Postgres.");
 
         builder.Services.AddDbContext<TaskDbContext>(options => options.UseNpgsql(connectionString));
+        builder.Services.AddScoped<IUnitOfWork>(services => services.GetRequiredService<TaskDbContext>());
+        builder.Services.AddScoped<ITaskItemReadRepository, TaskItemReadRepository>();
+        builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 
         // Add services to the container.
         builder.Services.AddAuthorization();
