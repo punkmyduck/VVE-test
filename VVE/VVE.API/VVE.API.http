@@ -1,0 +1,6 @@
+@VVE.API_HostAddress = http://localhost:5241
+
+GET {{VVE.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

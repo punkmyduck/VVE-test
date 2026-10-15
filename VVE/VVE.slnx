@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="VVE.API/VVE.API.csproj" />
+  <Project Path="VVE.domain/VVE.domain.csproj" />
+</Solution>
