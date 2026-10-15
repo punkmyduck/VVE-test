@@ -63,11 +63,6 @@ public class RabbitMqIntegrationTests
             {
                 BaseAddress = new Uri("https://localhost")
             });
-            await using (var scope = factory.Services.CreateAsyncScope())
-            {
-                await scope.ServiceProvider.GetRequiredService<TaskDbContext>().Database.MigrateAsync(token);
-            }
-
             var created = await client.PostAsJsonAsync("/tasks", new { Title = "Купить молоко", Priority = "High" }, token);
             Assert.Equal(HttpStatusCode.Created, created.StatusCode);
             var id = (await created.Content.ReadFromJsonAsync<JsonElement>(token)).GetProperty("id").GetGuid();
@@ -193,6 +188,7 @@ public class RabbitMqIntegrationTests
         {
             builder.UseEnvironment("Development");
             builder.UseSetting("ConnectionStrings:Postgres", connectionString);
+            builder.UseSetting("Database:ApplyMigrationsOnStartup", "true");
             var options = CreateOptions();
             builder.UseSetting("RabbitMq:HostName", options.HostName);
             builder.UseSetting("RabbitMq:Port", options.Port.ToString());

@@ -6,6 +6,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: "8080"
+      Database__ApplyMigrationsOnStartup: "true"
       ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=vve_tasks;Username=vve;Password=vve_dev_password"
       RabbitMq__HostName: rabbitmq
       RabbitMq__UserName: vve
@@ -15,6 +16,8 @@ services:
       - "127.0.0.1:8080:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   postgres:

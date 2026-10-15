@@ -15,7 +15,7 @@ namespace VVE.API;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +56,14 @@ public class Program
 
         var app = builder.Build();
 
+        if (app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
+        {
+            // Применяем миграции до запуска HTTP-сервера, при ошибке приложение не стартует
+            await using var scope = app.Services.CreateAsyncScope();
+            var context = scope.ServiceProvider.GetRequiredService<TaskDbContext>();
+            await context.Database.MigrateAsync();
+        }
+
         app.UseExceptionHandler();
 
         if (app.Environment.IsDevelopment())
@@ -69,6 +77,6 @@ public class Program
 
         app.MapTaskEndpoints();
 
-        app.Run();
+        await app.RunAsync();
     }
 }
