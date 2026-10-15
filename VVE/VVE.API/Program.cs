@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using VVE.API.Endpoints;
 using VVE.API.ErrorHandling;
 using VVE.Application.Abstractions;
+using VVE.Application.Abstractions.Messaging;
 using VVE.Application.Abstractions.Persistence;
 using VVE.Application.Features;
 using VVE.Domain;
 using VVE.Infrastructure.Persistence;
 using VVE.Infrastructure.Persistence.Repositories;
+using VVE.Infrastructure.Messaging;
 
 namespace VVE.API;
 
@@ -35,6 +37,13 @@ public class Program
 
         builder.Services.AddScoped<ICommandHandler<CompleteTaskCommand>, CompleteTaskCommandHandler>();
         builder.Services.AddScoped<ICommandHandler<DeleteTaskCommand>, DeleteTaskCommandHandler>();
+
+        builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.SectionName));
+        builder.Services.AddSingleton<RabbitMqTaskEventPublisher>();
+        builder.Services.AddSingleton<ITaskEventPublisher>(services =>
+            services.GetRequiredService<RabbitMqTaskEventPublisher>());
+        builder.Services.AddHostedService(services => services.GetRequiredService<RabbitMqTaskEventPublisher>());
+        builder.Services.Configure<HostOptions>(options => options.ShutdownTimeout = TimeSpan.FromSeconds(5));
 
         builder.Services.AddProblemDetails();
         builder.Services.AddExceptionHandler<ApiExceptionHandler>();
