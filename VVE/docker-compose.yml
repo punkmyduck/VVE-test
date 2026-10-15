@@ -7,6 +7,10 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: "8080"
       ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=vve_tasks;Username=vve;Password=vve_dev_password"
+      RabbitMq__HostName: rabbitmq
+      RabbitMq__UserName: vve
+      RabbitMq__Password: vve_dev_password
+    stop_grace_period: 6s
     ports:
       - "127.0.0.1:8080:8080"
     depends_on:
@@ -30,5 +34,23 @@ services:
       retries: 10
       start_period: 5s
 
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: vve
+      RABBITMQ_DEFAULT_PASS: vve_dev_password
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
 volumes:
   postgres_data:
+  rabbitmq_data:
