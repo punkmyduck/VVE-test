@@ -69,6 +69,11 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/openapi/v1.json", "VVE Tasks API v1");
+                options.DisplayRequestDuration();
+            });
         }
 
         app.UseHttpsRedirection();

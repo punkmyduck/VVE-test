@@ -113,6 +113,7 @@ public sealed class RabbitMqTaskEventPublisher : BackgroundService, ITaskEventPu
             RabbitMqOptions.ExchangeName, RabbitMqOptions.RoutingKey,
             mandatory: false, basicProperties: properties, body: body,
             cancellationToken: cancellationToken);
+        _logger.LogInformation("Отправлено событие {EventType} в RabbitMQ: {Message}", RabbitMqOptions.RoutingKey, JsonSerializer.Serialize(message, JsonOptions));
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
