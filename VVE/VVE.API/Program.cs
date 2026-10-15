@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using VVE.Infrastructure.Persistence;
+
 namespace VVE.API;
 
 public class Program
@@ -5,6 +8,11 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        var connectionString = builder.Configuration.GetConnectionString("Postgres")
+            ?? throw new InvalidOperationException("Не задана строка подключения ConnectionStrings:Postgres.");
+
+        builder.Services.AddDbContext<TaskDbContext>(options => options.UseNpgsql(connectionString));
 
         // Add services to the container.
         builder.Services.AddAuthorization();
