@@ -25,7 +25,7 @@ public class TaskItem
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            throw new ArgumentException("Title не может быть null.", nameof(title));
+            throw new ArgumentException("Title не может быть пустым или состоять только из пробелов.", nameof(title));
         }
 
         if (title.Length > TitleMaxLength)
