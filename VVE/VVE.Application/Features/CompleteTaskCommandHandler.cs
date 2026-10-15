@@ -43,6 +43,8 @@ public sealed class CompleteTaskCommandHandler : ICommandHandler<CompleteTaskCom
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+        // HACK: я бы здесь сделал через Outbox, чтобы события вообще не
+        // терялись в случае если чето упало и сохранялись в рамках одной транзакции, но уже не хватает на это времени
         _taskEventPublisher.PublishTaskCompleted(new TaskCompletedEvent(
             taskItem.Id,
             taskItem.Title,
