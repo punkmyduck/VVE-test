@@ -6,4 +6,5 @@
   <Project Path="VVE.Application/VVE.Application.csproj" />
   <Project Path="VVE.domain/VVE.Domain.csproj" />
   <Project Path="VVE.Infrastructure/VVE.Infrastructure.csproj" />
+  <Project Path="VVE.Tests/VVE.Tests.csproj" />
 </Solution>

@@ -1,5 +1,11 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using VVE.API.Endpoints;
+using VVE.API.ErrorHandling;
+using VVE.Application.Abstractions;
 using VVE.Application.Abstractions.Persistence;
+using VVE.Application.Features;
+using VVE.Domain;
 using VVE.Infrastructure.Persistence;
 using VVE.Infrastructure.Persistence.Repositories;
 
@@ -19,15 +25,30 @@ public class Program
         builder.Services.AddScoped<ITaskItemReadRepository, TaskItemReadRepository>();
         builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 
-        // Add services to the container.
+        builder.Services.AddScoped<
+            ICommandHandler<CreateTaskItemCommand, Guid>,
+            CreateTaskItemCommandHandler>();
+
+        builder.Services.AddScoped<
+            IRequestHandler<GetAllTasksRequest, IReadOnlyList<TaskItem>>,
+            GetAllTasksRequestHandler>();
+
+        builder.Services.AddScoped<ICommandHandler<CompleteTaskCommand>, CompleteTaskCommandHandler>();
+        builder.Services.AddScoped<ICommandHandler<DeleteTaskCommand>, DeleteTaskCommandHandler>();
+
+        builder.Services.AddProblemDetails();
+        builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+        builder.Services.ConfigureHttpJsonOptions(options =>
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
         builder.Services.AddAuthorization();
 
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+        app.UseExceptionHandler();
+
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
@@ -36,6 +57,8 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+
+        app.MapTaskEndpoints();
 
         app.Run();
     }
